@@ -1,0 +1,30 @@
+* {
+    margin: 2px;
+}
+
+body{
+    background: linear-gradient(-45deg, #35577D, #141E30);
+}
+
+p {
+    color: green;
+}
+
+#bio {
+    color: rgb(233, 112, 132);
+}
+
+.site-nav {
+    background-color: rgba(20, 30, 48, 0.95);
+    border-bottom: 2px solid paleturquoise;
+    margin: 0;
+}
+
+.site-nav .navbar-brand,
+.site-nav .nav-link {
+    color: paleturquoise !important;
+}
+
+.site-nav .nav-link:hover {
+    color: rgb(233, 112, 132) !important;
+}
