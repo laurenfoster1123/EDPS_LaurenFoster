@@ -1,0 +1,296 @@
+import { useState, useRef, useCallback } from "react";
+import { X, Plus } from "lucide-react";
+
+const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const START_DAY = 3;
+const TOTAL_DAYS = 31;
+const TODAY = 4;
+
+function hslToHex(h: number, s: number, l: number): string {
+  s /= 100; l /= 100;
+  const k = (n: number) => (n + h / 30) % 12;
+  const a = s * Math.min(l, 1 - l);
+  const f = (n: number) => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+  const toHex = (x: number) => Math.round(x * 255).toString(16).padStart(2, "0");
+  return `#${toHex(f(0))}${toHex(f(8))}${toHex(f(4))}`;
+}
+
+interface AgendaItem { id: string; label: string; color: string; }
+interface Note { id: string; text: string; agendaId: string | null; }
+
+function ColorPicker({ value, onChange }: { value: string; onChange: (c: string) => void }) {
+  const [hue, setHue] = useState(210);
+  const [sat, setSat] = useState(80);
+  const [lit, setLit] = useState(55);
+  const gradRef = useRef<HTMLDivElement>(null);
+  const dragging = useRef(false);
+
+  const updateFromGrad = useCallback((e: React.MouseEvent | MouseEvent) => {
+    if (!gradRef.current) return;
+    const rect = gradRef.current.getBoundingClientRect();
+    const x = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    const y = Math.max(0, Math.min(1, (e.clientY - rect.top) / rect.height));
+    const newSat = Math.round(x * 100);
+    const newLit = Math.round(100 - y * 60 - 10);
+    setSat(newSat);
+    setLit(newLit);
+    onChange(hslToHex(hue, newSat, newLit));
+  }, [hue, onChange]);
+
+  const onHueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const h = Number(e.target.value);
+    setHue(h);
+    onChange(hslToHex(h, sat, lit));
+  };
+
+  return (
+    <div className="flex flex-col gap-2 w-48" onClick={(e) => e.stopPropagation()}>
+      <div
+        ref={gradRef}
+        className="w-full h-28 rounded-lg cursor-crosshair relative select-none"
+        style={{
+          background: `linear-gradient(to bottom, transparent, #000), linear-gradient(to right, #fff, hsl(${hue}, 100%, 50%))`,
+        }}
+        onMouseDown={(e) => { dragging.current = true; updateFromGrad(e); }}
+        onMouseMove={(e) => { if (dragging.current) updateFromGrad(e); }}
+        onMouseUp={() => { dragging.current = false; }}
+        onMouseLeave={() => { dragging.current = false; }}
+      >
+        <div
+          className="absolute w-3 h-3 rounded-full border-2 border-white shadow -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+          style={{
+            left: `${sat}%`,
+            top: `${((100 - lit - 10) / 60) * 100}%`,
+            backgroundColor: hslToHex(hue, sat, lit),
+          }}
+        />
+      </div>
+      <div className="flex items-center gap-2">
+        <div className="flex-1 h-3 rounded-full" style={{ background: "linear-gradient(to right, #f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)" }}>
+          <input
+            type="range" min={0} max={360} value={hue}
+            onChange={onHueChange}
+            className="w-full h-3 opacity-0 cursor-pointer"
+          />
+        </div>
+        <div className="w-6 h-6 rounded-full border border-gray-200 shadow-sm flex-shrink-0" style={{ backgroundColor: hslToHex(hue, sat, lit) }} />
+      </div>
+    </div>
+  );
+}
+
+export default function App() {
+  const [agenda, setAgenda] = useState<AgendaItem[]>([
+    { id: "1", label: "Work", color: "#38bdf8" },
+    { id: "2", label: "Personal", color: "#34d399" },
+    { id: "3", label: "Health", color: "#f87171" },
+  ]);
+  const [dayNotes, setDayNotes] = useState<Record<number, Note[]>>({});
+  const [newLabel, setNewLabel] = useState("");
+  const [newColor, setNewColor] = useState("#38bdf8");
+  const [showColorPicker, setShowColorPicker] = useState(false);
+  const [openPicker, setOpenPicker] = useState<{ day: number; noteId: string } | null>(null);
+  const [editingAgendaId, setEditingAgendaId] = useState<string | null>(null);
+
+  const getNotes = (day: number): Note[] => dayNotes[day] ?? [];
+
+  const addNote = (day: number) => {
+    const note: Note = { id: Date.now().toString(), text: "", agendaId: null };
+    setDayNotes((prev) => ({ ...prev, [day]: [...getNotes(day), note] }));
+  };
+
+  const updateNote = (day: number, noteId: string, patch: Partial<Note>) => {
+    setDayNotes((prev) => ({
+      ...prev,
+      [day]: getNotes(day).map((n) => n.id === noteId ? { ...n, ...patch } : n),
+    }));
+  };
+
+  const removeNote = (day: number, noteId: string) => {
+    setDayNotes((prev) => ({ ...prev, [day]: getNotes(day).filter((n) => n.id !== noteId) }));
+  };
+
+  const addAgendaItem = () => {
+    const label = newLabel.trim();
+    if (!label) return;
+    setAgenda((prev) => [...prev, { id: Date.now().toString(), label, color: newColor }]);
+    setNewLabel("");
+    setShowColorPicker(false);
+  };
+
+  const removeAgendaItem = (id: string) => {
+    setAgenda((prev) => prev.filter((a) => a.id !== id));
+    setDayNotes((prev) => {
+      const next = { ...prev };
+      for (const key in next) {
+        next[+key] = next[+key].map((n) => n.agendaId === id ? { ...n, agendaId: null } : n);
+      }
+      return next;
+    });
+  };
+
+  const getAgenda = (id: string | null) => agenda.find((a) => a.id === id) ?? null;
+
+  const cells: (number | null)[] = [
+    ...Array(START_DAY).fill(null),
+    ...Array.from({ length: TOTAL_DAYS }, (_, i) => i + 1),
+  ];
+  while (cells.length % 7 !== 0) cells.push(null);
+  const weeks: (number | null)[][] = [];
+  for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
+
+  return (
+    <div className="min-h-screen bg-gray-100 p-5" onClick={() => { setOpenPicker(null); setShowColorPicker(false); }}>
+      <div className="max-w-screen-xl mx-auto">
+        <div className="text-center mb-4">
+          <h1 className="text-4xl font-bold text-gray-800 tracking-tight">July 2026</h1>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 px-4 py-3 mb-4 flex flex-wrap items-center gap-3">
+          <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide mr-1">Agenda</span>
+          {agenda.map((item) => (
+            <div key={item.id} className="flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium text-white" style={{ backgroundColor: item.color }}>
+              {editingAgendaId === item.id ? (
+                <input
+                  autoFocus
+                  className="bg-transparent outline-none w-20 text-white"
+                  value={item.label}
+                  onChange={(e) => setAgenda((prev) => prev.map((a) => a.id === item.id ? { ...a, label: e.target.value } : a))}
+                  onBlur={() => setEditingAgendaId(null)}
+                  onKeyDown={(e) => e.key === "Enter" && setEditingAgendaId(null)}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              ) : (
+                <span className="cursor-pointer" onDoubleClick={() => setEditingAgendaId(item.id)}>{item.label}</span>
+              )}
+              <button onClick={() => removeAgendaItem(item.id)} className="opacity-70 hover:opacity-100 ml-0.5">
+                <X size={11} />
+              </button>
+            </div>
+          ))}
+          <div className="flex items-center gap-2 ml-auto relative" onClick={(e) => e.stopPropagation()}>
+            <button
+              className="w-6 h-6 rounded-full border-2 border-gray-300 shadow-sm flex-shrink-0"
+              style={{ backgroundColor: newColor }}
+              onClick={() => setShowColorPicker((v) => !v)}
+              title="Pick color"
+            />
+            {showColorPicker && (
+              <div className="absolute top-9 left-0 z-50 bg-white border border-gray-200 rounded-xl shadow-xl p-3">
+                <ColorPicker value={newColor} onChange={setNewColor} />
+              </div>
+            )}
+            <input
+              className="border border-gray-200 rounded-lg px-2 py-1 text-xs outline-none w-28"
+              placeholder="New item..."
+              value={newLabel}
+              onChange={(e) => setNewLabel(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && addAgendaItem()}
+            />
+            <button
+              onClick={addAgendaItem}
+              className="bg-gray-800 text-white rounded-lg px-2 py-1 text-xs flex items-center gap-1 hover:bg-gray-700"
+            >
+              <Plus size={12} /> Add
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-7 mb-1">
+          {DAYS.map((day) => (
+            <div key={day} className="text-center text-xs font-semibold text-gray-500 uppercase py-2 border-b border-gray-200">
+              {day}
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-7 border-l border-t border-gray-200">
+          {weeks.map((week, wi) =>
+            week.map((day, di) => {
+              const notes = day !== null ? getNotes(day) : [];
+              return (
+                <div
+                  key={`${wi}-${di}`}
+                  className={`border-r border-b border-gray-200 min-h-52 flex flex-col p-2 ${day === null ? "bg-gray-50" : "bg-white"}`}
+                >
+                  {day !== null && (
+                    <>
+                      <div className="flex items-center justify-between mb-1.5 flex-shrink-0">
+                        <span className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-sm font-semibold ${day === TODAY ? "bg-blue-600 text-white" : "text-gray-700"}`}>
+                          {day}
+                        </span>
+                        <button
+                          className="w-5 h-5 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors"
+                          onClick={() => addNote(day)}
+                          title="Add note"
+                        >
+                          <Plus size={11} />
+                        </button>
+                      </div>
+                      <div className="flex flex-col gap-1 flex-1">
+                        {notes.map((note) => {
+                          const assigned = getAgenda(note.agendaId);
+                          const isOpen = openPicker?.day === day && openPicker?.noteId === note.id;
+                          return (
+                            <div key={note.id} className="group/note relative flex items-start gap-1">
+                              <button
+                                className="flex-shrink-0 mt-1 w-2 h-2 rounded-full border border-white shadow-sm"
+                                style={{ backgroundColor: assigned ? assigned.color : "#d1d5db" }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setOpenPicker(isOpen ? null : { day, noteId: note.id });
+                                }}
+                                title="Assign agenda"
+                              />
+                              <input
+                                autoFocus={note.text === ""}
+                                className="flex-1 text-xs text-gray-700 outline-none bg-transparent leading-relaxed min-w-0"
+                                style={{ borderBottom: `1px solid ${assigned ? assigned.color + "66" : "#e5e7eb"}` }}
+                                placeholder="Note..."
+                                value={note.text}
+                                onChange={(e) => updateNote(day, note.id, { text: e.target.value })}
+                              />
+                              <button
+                                className="flex-shrink-0 opacity-0 group-hover/note:opacity-100 text-gray-300 hover:text-gray-500 transition-opacity"
+                                onClick={() => removeNote(day, note.id)}
+                              >
+                                <X size={10} />
+                              </button>
+                              {isOpen && (
+                                <div
+                                  className="absolute left-3 top-5 z-50 bg-white border border-gray-200 rounded-lg shadow-lg p-2 flex flex-col gap-1 min-w-32"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <button
+                                    className="text-left text-xs text-gray-400 hover:text-gray-600 px-2 py-1 rounded hover:bg-gray-50"
+                                    onClick={() => { updateNote(day, note.id, { agendaId: null }); setOpenPicker(null); }}
+                                  >
+                                    None
+                                  </button>
+                                  {agenda.map((a) => (
+                                    <button
+                                      key={a.id}
+                                      className="flex items-center gap-2 text-left text-xs px-2 py-1 rounded hover:bg-gray-50"
+                                      onClick={() => { updateNote(day, note.id, { agendaId: a.id }); setOpenPicker(null); }}
+                                    >
+                                      <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: a.color }} />
+                                      {a.label}
+                                    </button>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </>
+                  )}
+                </div>
+              );
+            })
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
