@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Week 8 Activity 1 - Aspect Ratio and Object Fit</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      :root {
+        --ink: #1f2933;
+        --muted: #5c6f82;
+        --line: #d9e2ec;
+        --paper: #f8fafc;
+        --accent: #0f766e;
+        --accent-soft: #dff6f2;
+      }
+
+      body {
+        margin: 0;
+        background: #f4f6f8;
+        color: var(--ink);
+        font-family: Arial, Helvetica, sans-serif;
+        line-height: 1.5;
+      }
+
+      main {
+        width: min(1080px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 32px 0 48px;
+      }
+
+      header,
+      section {
+        margin-bottom: 18px;
+        padding: 20px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #ffffff;
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin-top: 0;
+      }
+
+      h1 {
+        font-size: clamp(2rem, 5vw, 3.25rem);
+        line-height: 1.1;
+      }
+
+      h2 {
+        color: var(--accent);
+      }
+
+      a {
+        color: #0b5cad;
+      }
+
+      code {
+        padding: 2px 5px;
+        border-radius: 4px;
+        background: #edf2f7;
+      }
+
+      .reading-list,
+      .task-list,
+      .exit-list {
+        padding-left: 22px;
+      }
+
+      .value-bank {
+        padding: 14px 16px;
+        border-left: 4px solid var(--accent);
+        border-radius: 8px;
+        background: var(--accent-soft);
+      }
+
+      .value-bank ul {
+        margin-bottom: 0;
+        padding-left: 22px;
+      }
+
+      .roles,
+      .demo-grid,
+      .build-grid {
+        display: grid;
+        gap: 16px;
+      }
+
+      .roles {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      }
+
+      .role {
+        padding: 12px;
+        border-left: 4px solid var(--accent);
+        background: var(--accent-soft);
+      }
+
+      .demo-grid,
+      .build-grid {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+
+      .demo-card,
+      .practice-card {
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--paper);
+      }
+
+      .image-frame {
+        width: 100%;
+        overflow: hidden;
+        border: 2px solid #bcccdc;
+        border-radius: 8px;
+        background: #e6edf4;
+      }
+
+      .image-frame img {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      .square-frame {
+        aspect-ratio: 1 / 1;
+      }
+
+      .wide-frame {
+        aspect-ratio: 16 / 9;
+      }
+
+      .tall-frame {
+        aspect-ratio: 3 / 4;
+      }
+
+      .cover-frame img {
+        object-fit: cover;
+      }
+
+      .contain-frame img {
+        object-fit: contain;
+      }
+
+      .fill-frame img {
+        object-fit: fill;
+      }
+
+      /*
+        Hands-on TODO area:
+        Edit these two selectors during the group challenge.
+      */
+      .practice-frame {
+        width: 100%;
+        max-width: 380px;
+        overflow: hidden;
+        border: 3px dashed var(--accent);
+        border-radius: 8px;
+        background: #e6edf4;
+        aspect-ratio: 4 / 3;
+      }
+
+      .practice-frame img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+      }
+
+      .note {
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/object-fit -->
+    <main>
+      <header>
+        <h1>Collaborative Practice 1: Aspect Ratio and Object Fit</h1>
+        <p>
+          Goal: control the shape of an image area with
+          <code>aspect-ratio</code>, then decide how the image should fit inside
+          that area with <code>object-fit</code>.
+        </p>
+      </header>
+
+      <section>
+        <h2>1. Read First</h2>
+        <ul class="reading-list">
+          <li>
+            <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/aspect-ratio" target="_blank" rel="noopener">MDN: aspect-ratio</a>
+          </li>
+          <li>
+            <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/object-fit" target="_blank" rel="noopener">MDN: object-fit</a>
+          </li>
+          <li>
+            <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/object-position" target="_blank" rel="noopener">MDN: object-position</a>
+          </li>
+        </ul>
+        <p>
+          Partner check: explain the difference between changing an image's
+          container shape and changing how the image fills that container.
+        </p>
+      </section>
+
+      <section>
+        <h2>2. Work Roles</h2>
+        <div class="roles">
+          <div class="role">
+            <strong>Driver</strong>
+            <br />
+            Edits the CSS one property at a time.
+          </div>
+          <div class="role">
+            <strong>Navigator</strong>
+            <br />
+            Reads the reference links and predicts what should happen.
+          </div>
+          <div class="role">
+            <strong>Tester</strong>
+            <br />
+            Refreshes the page and describes what changed visually.
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>3. Compare Examples</h2>
+        <div class="demo-grid">
+          <article class="demo-card">
+            <h3>Square + cover</h3>
+            <div class="image-frame square-frame cover-frame">
+              <img src="../week7/assets/genevieve_img.png" alt="Example portrait cropped into a square" />
+            </div>
+            <p class="note">
+              <code>cover</code> fills the whole square and may crop part of the
+              image.
+            </p>
+          </article>
+
+          <article class="demo-card">
+            <h3>Wide + contain</h3>
+            <div class="image-frame wide-frame contain-frame">
+              <img src="../week7/assets/genevieve_img.png" alt="Example portrait contained inside a wide rectangle" />
+            </div>
+            <p class="note">
+              <code>contain</code> keeps the whole image visible and may leave
+              empty space.
+            </p>
+          </article>
+
+          <article class="demo-card">
+            <h3>Tall + fill</h3>
+            <div class="image-frame tall-frame fill-frame">
+              <img src="../week7/assets/genevieve_img.png" alt="Example portrait stretched inside a tall rectangle" />
+            </div>
+            <p class="note">
+              <code>fill</code> forces the image into the box and can distort
+              it.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>4. Hands-On Practice</h2>
+        <p>
+          Work together in the CSS TODO area. Use the values below to reach each
+          final goal. Change one value at a time, refresh, and explain why your
+          choice works.
+        </p>
+
+        <div class="value-bank">
+          <h3>Value Bank</h3>
+          <ul>
+            <li><code>aspect-ratio</code>: <code>1 / 1</code>, <code>16 / 9</code>, <code>3 / 4</code></li>
+            <li><code>object-fit</code>: <code>cover</code>, <code>contain</code>, <code>fill</code>, <code>none</code>, <code>scale-down</code></li>
+            <li><code>object-position</code>: <code>center</code>, <code>top</code>, <code>bottom</code>, <code>50% 30%</code></li>
+          </ul>
+        </div>
+
+        <h3>Final Goals</h3>
+        <ol class="task-list">
+          <li>Create a square profile photo that fills the frame without stretching.</li>
+          <li>Create a wide banner image that fills the full width and keeps the main subject visible.</li>
+          <li>Create a preview image where the entire original image is visible, even if empty space appears.</li>
+          <li>Create a tall story-card image and move the visible focus point to the most important part.</li>
+        </ol>
+
+        <div class="build-grid">
+          <article class="practice-card">
+            <h3>Group Test Image</h3>
+            <div class="practice-frame">
+              <img src="../week7/assets/genevieve_img.png" alt="Practice portrait for aspect-ratio and object-fit testing" />
+            </div>
+          </article>
+          <article class="practice-card">
+            <h3>Record Your Best Rule</h3>
+            <p>
+              Add the CSS choice your group used for one final goal:
+            </p>
+            <pre><code>.practice-frame {
+  aspect-ratio:
+}
+
+.practice-frame img {
+  object-fit:
+  object-position:
+}</code></pre>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Exit Ticket</h2>
+        <ul class="exit-list">
+          <li>Which property controls the shape of the image area?</li>
+          <li>Which <code>object-fit</code> value protects the full image from cropping?</li>
+          <li>Which <code>object-fit</code> value is most useful for profile photos?</li>
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>
