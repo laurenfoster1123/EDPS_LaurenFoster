@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sprouts</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Home screen: rules and start button -->
+  <main id="home-screen" class="screen">
+    <header class="hero">
+      <h1>Sprouts</h1>
+      <p class="subtitle">A classic pencil-and-paper game — now on screen!</p>
+    </header>
+
+    <div class="content-grid">
+      <section class="rules-column">
+        <article class="rule-card rule-purple">
+          <h2>📐 The Basics</h2>
+          <p>
+            Sprouts is a two-player game. Start with a few dots on the page.
+            On your turn, draw a line connecting two dots (or one dot back to itself).
+          </p>
+        </article>
+
+        <article class="rule-card rule-blue">
+          <h2>🎮 How to Play</h2>
+          <ol>
+            <li>Click and drag from one dot to another.</li>
+            <li>Draw any path you like (curved or straight).</li>
+            <li>Release on a valid dot to make a connection.</li>
+            <li>Click on any line to place a new dot.</li>
+            <li>Lines cannot cross existing lines.</li>
+          </ol>
+        </article>
+
+        <article class="rule-card rule-green">
+          <h2>🏆 Winning</h2>
+          <p>
+            Each dot can have at most <strong>3 connections</strong>.
+            The last player who can make a valid move wins!
+          </p>
+        </article>
+      </section>
+
+      <section class="preview-column">
+        <div class="preview-box">
+          <p class="preview-hint">Click and drag between dots…</p>
+          <svg viewBox="0 0 300 120" aria-hidden="true">
+            <circle cx="70" cy="60" r="22" class="preview-dot start-dot" />
+            <circle cx="230" cy="60" r="22" class="preview-dot start-dot" />
+            <path d="M 92 60 Q 150 20 208 60" class="preview-arrow" fill="none" />
+          </svg>
+        </div>
+
+        <article class="rule-card rule-yellow">
+          <h2>🎨 Dot Colors</h2>
+          <ul class="legend">
+            <li><span class="swatch start-dot"></span> Starting dots</li>
+            <li><span class="swatch player1-dot"></span> Player 1's dots</li>
+            <li><span class="swatch player2-dot"></span> Player 2's dots</li>
+          </ul>
+        </article>
+      </section>
+    </div>
+
+    <button id="start-btn" class="start-btn">Start Game</button>
+  </main>
+
+  <!-- Game screen: canvas and controls -->
+  <main id="game-screen" class="screen hidden">
+    <header class="game-header">
+      <h1>Sprouts</h1>
+      <div class="game-info">
+        <p id="turn-label">Player 1's turn</p>
+        <p id="status-label" class="status-label"></p>
+      </div>
+      <button id="back-btn" class="text-btn">← Back to rules</button>
+    </header>
+
+    <canvas id="game-canvas" width="800" height="500"></canvas>
+
+    <p id="help-text" class="help-text">
+      Drag from one dot to another, then click any line to place a new dot.
+    </p>
+  </main>
+
+  <script src="game.js"></script>
+</body>
+</html>

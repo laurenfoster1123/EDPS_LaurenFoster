@@ -1,0 +1,201 @@
+/* Simple, readable styles inspired by the Figma prototype */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: #f3f4f6;
+  color: #1e293b;
+  min-height: 100vh;
+}
+
+.screen {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 3rem;
+}
+
+.hidden {
+  display: none;
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  color: #1e3a8a;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: #64748b;
+  font-size: 1.1rem;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 700px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.rule-card {
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.rule-card h2 {
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.rule-card p,
+.rule-card li {
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.rule-card ol {
+  padding-left: 1.25rem;
+}
+
+.rule-purple { background: #ede9fe; }
+.rule-blue   { background: #dbeafe; }
+.rule-green  { background: #dcfce7; }
+.rule-yellow { background: #fef9c3; }
+
+.preview-box {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  min-height: 180px;
+}
+
+.preview-hint {
+  text-align: center;
+  color: #64748b;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.preview-dot {
+  fill: #7c3aed;
+}
+
+.preview-arrow {
+  stroke: #93c5fd;
+  stroke-width: 3;
+  stroke-dasharray: 6 4;
+}
+
+.legend {
+  list-style: none;
+}
+
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+
+.swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.start-dot  { background: #7c3aed; }
+.player1-dot { background: #2563eb; }
+.player2-dot { background: #dc2626; }
+
+.start-btn {
+  display: block;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(90deg, #2563eb, #7c3aed);
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.start-btn:hover {
+  opacity: 0.9;
+}
+
+/* Game screen */
+
+.game-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.game-header h1 {
+  font-size: 1.5rem;
+  color: #1e3a8a;
+}
+
+.game-info p {
+  font-size: 1rem;
+}
+
+.status-label {
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.text-btn {
+  background: none;
+  border: none;
+  color: #2563eb;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.text-btn:hover {
+  text-decoration: underline;
+}
+
+#game-canvas {
+  display: block;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: crosshair;
+}
+
+.help-text {
+  text-align: center;
+  color: #64748b;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
