@@ -1,30 +1,134 @@
-* {
-    margin: 2px;
-}
+
+
+
+/* body styling */
+
 
 body{
-    background: linear-gradient(-45deg, #35577D, #141E30);
+    font-family: "Roboto Slab", "Helvetica Neue", sans-serif;
+    font-size: 18px;
+    margin-top: 60px;
+    
 }
 
-p {
-    color: green;
+/* heading styling */
+
+.heading {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color:#444
 }
 
-#bio {
-    color: rgb(233, 112, 132);
+.h2-heading {
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
 }
+
+
+/* nav bar styling */
 
 .site-nav {
-    background-color: rgba(20, 30, 48, 0.95);
-    border-bottom: 2px solid paleturquoise;
+    
+    border-bottom: 2px solid;
+    border-top: 2px solid;
+    display: flex;
     margin: 0;
+    border-color: black;
+    justify-content: center;
+    align-items: center;
 }
 
-.site-nav .navbar-brand,
-.site-nav .nav-link {
-    color: paleturquoise !important;
+.nav-link {
+    color: black !important;
 }
 
 .site-nav .nav-link:hover {
-    color: rgb(233, 112, 132) !important;
+    color: rgb(154, 146, 148) !important;
 }
+
+.navbar {
+    color: white;
+}
+
+.nav-link {
+    color: black;
+}
+
+.site-nav .navbar-toggler {
+    border-color: rgba(0, 0, 0, 0.5);
+}
+
+.navbar-collapse {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-nav {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    column-gap: 4rem;
+    
+}
+
+.dropdown-toggle::after {
+    display: none;
+}
+
+.nav-item.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+/* welcome section styling */
+
+.headshot img {
+    width: 200px;
+    height: auto;
+    border: 10px solid #444;
+    display: flex;
+    justify-content:end;
+    
+
+}
+
+.welcome-section {
+    padding-top: 20px;
+    padding-bottom: 40px;
+}
+
+.welcome-section h2{
+    font-family: cursive, 
+}
+
+.weclome-section p{
+    font-size: 12px;
+}
+
+.footer {
+    height: 100px;
+}
+
+/* home page project section styling */
+
+.project {
+    border-top: 2px solid black;
+    border-bottom: 2px solid black;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+p {
+    font-size: 16px;
+}
+
+h3 {
+    font-size: 20px;
+}
+
+
